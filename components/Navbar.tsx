@@ -1,0 +1,28 @@
+import { Stethoscope } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+export default function Navbar(){
+return (
+ <nav className="border-b-gray-200 bg-white">
+    <div className="container mx-auto flex h-16 items-center px-4 justify-between"> 
+      <Link
+       href="/" 
+      className="flex items-center gap-2 text-lg font-semibold text-primary">
+    <Stethoscope />
+    Medical Hub
+   </Link>
+
+    <div className="flex items-center gap-4">
+     <Link href="/Sign-Up">  
+     <Button variant="ghost" className="text-gray-700 hover:text-black"> Login In</Button>
+  
+     
+     </Link> 
+     <Link href="/Sign-In">
+      <Button className="bg-primary hover:bg-primary/90">Start for free</Button>
+     </Link> 
+    </div>
+   </div>
+   </nav>
+);
+}
