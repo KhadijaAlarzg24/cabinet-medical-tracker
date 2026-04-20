@@ -13,12 +13,12 @@ return (
    </Link>
 
     <div className="flex items-center gap-4">
-     <Link href="/Sign-Up">  
+     <Link href="/sign-up">  
      <Button variant="ghost" className="text-gray-700 hover:text-black"> Login In</Button>
   
      
      </Link> 
-     <Link href="/Sign-In">
+     <Link href="/sign-in">
       <Button className="bg-primary hover:bg-primary/90">Start for free</Button>
      </Link> 
     </div>
