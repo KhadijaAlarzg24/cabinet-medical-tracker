@@ -1,49 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/db";
-import { Patient, Column } from "@/lib/models";
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+
+export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
-    await connectDB();
-    // Extract patient ID from the link (folder [id])
-    const { id: patientId } = await params;
+     
+    const { id } = await context.params; 
     
-    // Extracting the target column from the body
-    const { columnId: newColumnId } = await request.json();
+    const body = await request.json();
+    const { columnId } = body;
 
-    if (!patientId || !newColumnId) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
+    
+    // await db.patient.update({ where: { id }, data: { columnId } });
 
-    // Searching for the patient to find their current column
-    const patient = await Patient.findById(patientId);
-    if (!patient) {
-      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
-    }
+    return NextResponse.json({ message: "Patient déplacé avec succès" }, { status: 200 });
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
 
-    const oldColumnId = patient.columnId;
 
-    // 1. Remove the patient from the old column matrix
-    if (oldColumnId) {
-      await Column.findByIdAndUpdate(oldColumnId, {
-        $pull: { patients: patientId },
-      });
-    }
+export async function DELETE(request: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params;
 
-     // 2. Add the patient to the new column matrix
-    await Column.findByIdAndUpdate(newColumnId, {
-      $push: { patients: patientId },
-    });
-    // 3. Update the column within the same patient:
-    patient.columnId = newColumnId;
-    await patient.save();
+    // await db.patient.delete({ where: { id } });
 
-    return NextResponse.json({ success: true, patient });
-  } catch (error: any) {
-    console.error("PATCH Error:", error);
-    return NextResponse.json({ error: "Server error", details: error.message }, { status: 500 });
+    return NextResponse.json({ message: "Patient supprimé" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
