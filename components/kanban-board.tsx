@@ -213,20 +213,22 @@ function DroppableColumn({
 export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
   const columns = board?.columns || [];
   const router = useRouter();
-  
-  
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     setEnabled(true);
-  }, []);
+    // 
+    if (userId) {
+      Object.defineProperty(window, '__activeUser', { value: userId, writable: true });
+    }
+  }, [userId]);
 
   if (!enabled) {
     return null;
   }
 
-  
-  if (process.env.NODE_DIR === "development") {
+  // 
+  if (process.env.NODE_ENV === "development") {
     console.log("Active user session:", userId);
   }
 
