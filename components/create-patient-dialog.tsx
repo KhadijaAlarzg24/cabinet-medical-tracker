@@ -1,119 +1,105 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+
 
 interface CreatePatientDialogProps {
   columnId: string;
   boardId: string;
+  userId: string; 
 }
 
-export default function CreatePatientDialog({
-  columnId,
-  boardId,
-}: CreatePatientDialogProps) {
+export default function CreatePatientDialog({ columnId, boardId, userId }: CreatePatientDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [address, setAddress] = useState("");
-  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+  });
 
-  async function handleSubmit() {
-    if (!firstName || !lastName) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-    await fetch("/api/patients", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        phone,
-        email,
-        dateOfBirth,
-        address,
-        notes,
-        columnId,
-        boardId,
-      }),
-    });
+    try {
+      const response = await fetch("/api/patients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          columnId,
+          boardId,
+          userId, // استخدام المتغير هنا لإرساله مع الطلب للـ API
+        }),
+      });
 
-    setFirstName("");
-    setLastName("");
-    setPhone("");
-    setEmail("");
-    setDateOfBirth("");
-    setAddress("");
-    setNotes("");
-    setOpen(false);
-    router.refresh();
-  }
+      if (response.ok) {
+        setOpen(false);
+        setFormData({ firstName: "", lastName: "", phone: "" });
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Error creating patient:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-white text-blue-600 hover:bg-white/90 text-sm font-medium">
-          <Plus className="h-4 w-4 mr-1" />
-          Ajouter un patient
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20">
+          <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[500px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Nouveau Patient</DialogTitle>
+          <DialogTitle>Ajouter un nouveau patient</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Prénom *</Label>
-              <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Prénom" />
-            </div>
-            <div>
-              <Label>Nom *</Label>
-              <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Nom de famille" />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">Prénom</Label>
+            <Input
+              id="firstName"
+              required
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Téléphone</Label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="06 00 00 00 00" />
-            </div>
-            <div>
-              <Label>Email</Label>
-              <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Nom</Label>
+            <Input
+              id="lastName"
+              required
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Date de naissance</Label>
-              <Input type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
-            </div>
-            <div>
-              <Label>Adresse</Label>
-              <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Adresse" />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Téléphone</Label>
+            <Input
+              id="phone"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
           </div>
-          <div>
-            <Label>Notes</Label>
-            <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes médicales..." />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Création..." : "Ajouter"}
+            </Button>
           </div>
-          <Button onClick={handleSubmit} className="w-full bg-blue-600 text-white hover:bg-blue-700">
-            Ajouter
-          </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -67,11 +67,13 @@ function DroppableColumn({
   config,
   boardId,
   allColumns,
+  userId, // 🟢 استقبال الـ userId
 }: {
   column: ColumnData;
   config: ColConfig;
   boardId: string;
   allColumns: ColumnData[];
+  userId: string; // 🟢 تعريف النوع للـ userId
 }) {
   const router = useRouter();
   const patients = column.patients || [];
@@ -108,7 +110,8 @@ function DroppableColumn({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <CreatePatientDialog columnId={column._id} boardId={boardId} />
+            {/* 🟢 تمرير الـ userId المحدث لحل الخطأ */}
+            <CreatePatientDialog columnId={column._id} boardId={boardId} userId={userId} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -217,7 +220,6 @@ export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
 
   useEffect(() => {
     setEnabled(true);
-    // 
     if (userId) {
       Object.defineProperty(window, '__activeUser', { value: userId, writable: true });
     }
@@ -227,7 +229,6 @@ export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
     return null;
   }
 
-  // 
   if (process.env.NODE_ENV === "development") {
     console.log("Active user session:", userId);
   }
@@ -271,6 +272,7 @@ export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
                 config={config}
                 boardId={board?._id || ""}
                 allColumns={columns}
+                userId={userId} // 🟢 
               />
             );
           })}
