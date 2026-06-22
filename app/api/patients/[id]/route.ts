@@ -8,18 +8,17 @@ export async function PATCH(
 ) {
   try {
     await connectDB();
-    
-    // استخراج معرف المريض من الرابط (المجلد [id])
+    // Extract patient ID from the link (folder [id])
     const { id: patientId } = await params;
     
-    // استخراج العمود المستهدف من الـ body
+    // Extracting the target column from the body
     const { columnId: newColumnId } = await request.json();
 
     if (!patientId || !newColumnId) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // البحث عن المريض لمعرفة عموده الحالي
+    // Searching for the patient to find their current column
     const patient = await Patient.findById(patientId);
     if (!patient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
@@ -27,19 +26,18 @@ export async function PATCH(
 
     const oldColumnId = patient.columnId;
 
-    // 1. إزالة المريض من مصفوفة العمود القديم
+    // 1. Remove the patient from the old column matrix
     if (oldColumnId) {
       await Column.findByIdAndUpdate(oldColumnId, {
         $pull: { patients: patientId },
       });
     }
 
-    // 2. إضافة المريض إلى مصفوفة العمود الجديد
+     // 2. Add the patient to the new column matrix
     await Column.findByIdAndUpdate(newColumnId, {
       $push: { patients: patientId },
     });
-
-    // 3. تحديث العمود داخل المريض نفسه
+    // 3. Update the column within the same patient:
     patient.columnId = newColumnId;
     await patient.save();
 

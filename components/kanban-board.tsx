@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, Clock, CheckCircle2, MoreVertical, User } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -76,7 +76,6 @@ function DroppableColumn({
   const router = useRouter();
   const patients = column.patients || [];
 
-  // دالة النقل البرمجي (المستخدمة في الأزرار وعند السحب والإفلات معاً)
   async function movePatient(patientId: string, targetColumnId: string) {
     try {
       const response = await fetch(`/api/patients/${patientId}`, {
@@ -86,7 +85,7 @@ function DroppableColumn({
       });
 
       if (response.ok) {
-        router.refresh(); // تحديث فوري وشامل لبيانات الصفحة
+        router.refresh();
       } else {
         console.error("Failed to move patient");
       }
@@ -132,7 +131,6 @@ function DroppableColumn({
         </p>
       </CardHeader>
 
-      {/* 🟢 جعل حاوية العمود منطقة قابلة لاستقبال البطاقات المسحوبة */}
       <Droppable droppableId={column._id}>
         {(provided, snapshot) => (
           <CardContent
@@ -143,7 +141,6 @@ function DroppableColumn({
             }`}
           >
             {patients.map((patient, index) => (
-              // 🔵 جعل كل بطاقة مريض عنصر قابل للسحب والإمساك بالماوس
               <Draggable key={patient._id} draggableId={patient._id} index={index}>
                 {(provided, snapshot) => (
                   <div
@@ -172,7 +169,6 @@ function DroppableColumn({
                         </div>
                       </div>
 
-                      {/* أزرار النقل الملونة السريعة بالأسفل */}
                       <div className="flex gap-1 justify-end pt-1 border-t border-gray-100">
                         {allColumns
                           .filter((c) => c._id !== column._id)
@@ -190,7 +186,7 @@ function DroppableColumn({
                               <button
                                 key={targetCol._id}
                                 onClick={(e) => {
-                                  e.stopPropagation(); // منع تعارض الضغطة مع حدث السحب
+                                  e.stopPropagation();
                                   movePatient(patient._id, targetCol._id);
                                 }}
                                 className={`text-[10px] px-2 py-1 rounded font-medium transition-all duration-200 ${btnStyles}`}
@@ -214,21 +210,34 @@ function DroppableColumn({
   );
 }
 
-export default function KanbanBoard({ board }: KanbanBoardProps) {
+export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
   const columns = board?.columns || [];
   const router = useRouter();
+  
+  
+  const [enabled, setEnabled] = useState(false);
 
-  // معالجة نقل البطاقة فور إفلاتها بالماوس
+  useEffect(() => {
+    setEnabled(true);
+  }, []);
+
+  if (!enabled) {
+    return null;
+  }
+
+  
+  if (process.env.NODE_DIR === "development") {
+    console.log("Active user session:", userId);
+  }
+
   const onDragEnd = async (result: DropResult) => {
     const { destination, source, draggableId } = result;
 
-    // إلغاء العملية لو تم الإفلات بمكان غير مسموح أو بنفس المكان
     if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
       return;
     }
 
     try {
-      // إرسال التحديث لـ API السيرفر مباشرة
       const response = await fetch(`/api/patients/${draggableId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -245,7 +254,6 @@ export default function KanbanBoard({ board }: KanbanBoardProps) {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4">
-      {/* 🎛️ تفعيل سياق السحب والإفلات للوحة كاملة */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {columns.map((col: ColumnData, key: number) => {
