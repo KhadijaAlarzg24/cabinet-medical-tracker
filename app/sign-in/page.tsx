@@ -37,7 +37,7 @@ export default function SignIn() {
         setError(result.error.message || "Sign in failed. Please check your credentials.");
       } else {
         // Redirect to dashboard upon success
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
