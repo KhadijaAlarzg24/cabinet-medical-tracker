@@ -30,6 +30,7 @@ export default function SignIn() {
         email,
         password,
       });
+        console.log("result:", JSON.stringify(result));
 
       if (result?.error) {
         // Display error if sign-in fails
