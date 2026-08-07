@@ -19,6 +19,12 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
+
+  trustedOrigins: [
+    "https://cabinet-medical-tracker.vercel.app",
+    "http://localhost:3000",
+  ],
+
   emailAndPassword: {
     enabled: true,
   },
