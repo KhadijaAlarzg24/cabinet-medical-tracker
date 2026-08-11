@@ -1,8 +1,9 @@
-import"./board";
-import"./column";
-import"./medical-tracker";
-
+import "./board";
+import "./column";
+import "./medical-tracker";
+import "./appointment";
 
 export { default as Board } from "./board";
 export { default as Column } from "./column";
 export { default as Patient } from "./medical-tracker";
+export { default as Appointment } from "./appointment";

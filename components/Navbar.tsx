@@ -39,6 +39,11 @@ export default async function Navbar() {
                   Dashboard
                 </Button>
               </Link>
+              <Link href="/appointments">
+              <Button variant="ghost" className="text-gray-700 hover:text-black">
+              Rendez-vous
+              </Button>
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full cursor-pointer">

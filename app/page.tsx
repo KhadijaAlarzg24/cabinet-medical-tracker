@@ -11,7 +11,7 @@ const features = [
     title: "Gestion des Patients",
     description: "Accédez instantanément aux dossiers médicaux et historiques.",
     icon: UserPlus,
-    image: "/hero-images/hero1.png",  
+    image: "/hero-images/hero1.png",
   },
   {
     id: "appointments",
@@ -23,7 +23,7 @@ const features = [
   {
     id: "security",
     title: "Données Sécurisées",
-    description: "Cryptage avancé     Pour garantir la confidentialité des données de vos patients.ىحك",
+    description: "Cryptage avancé pour garantir la confidentialité des données de vos patients.",
     icon: ShieldCheck,
     image: "/hero-images/hero3.png",
   },
@@ -37,23 +37,27 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-20 text-center container mx-auto">
         <h1 className="text-5xl font-extrabold text-black mb-6">Cabinet Médical Intelligent</h1>
-        <Button size="lg" className="bg-blue-600">Commencer Maintenant</Button>
+        <Button
+          size="lg"
+          className="bg-blue-600"
+          onClick={() => window.location.href = "/sign-up"}
+        >
+          Commencer Maintenant
+        </Button>
       </section>
 
-      
+      {/* Features Section */}
       <section className="bg-slate-50 py-24 border-t">
         <div className="container mx-auto px-4">
-          
-          
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {features.map((f) => (
               <div
                 key={f.id}
                 onClick={() => setActiveTab(f.id)}
                 className={`cursor-pointer p-8 rounded-2xl transition-all duration-300 ${
-                  activeTab === f.id 
-                  ? "bg-white shadow-2xl ring-2 ring-blue-500 scale-105" 
-                  : "bg-transparent opacity-50 hover:opacity-100"
+                  activeTab === f.id
+                    ? "bg-white shadow-2xl ring-2 ring-blue-500 scale-105"
+                    : "bg-transparent opacity-50 hover:opacity-100"
                 }`}
               >
                 <f.icon className={`h-10 w-10 mb-4 ${activeTab === f.id ? "text-blue-600" : "text-gray-400"}`} />
@@ -63,25 +67,40 @@ export default function Home() {
             ))}
           </div>
 
-         
           <div className="relative mx-auto max-w-5xl rounded-3xl border-8 border-white shadow-2xl overflow-hidden">
-            {features.map((f) => (
+            {features.map((f) =>
               activeTab === f.id && (
-                <Image
-                  key={f.id}
-                  src={f.image}
-                  alt={f.title}
-                  width={1200}
-                  height={800}
-                  className="w-full h-auto animate-in fade-in slide-in-from-bottom-4 duration-700"
-                />
-              )
-            ))}
-          </div>
 
+                
+                <img
+  key={f.id}
+  src={f.image}
+  alt={f.title}
+  className="w-full h-auto animate-in fade-in slide-in-from-bottom-4 duration-700"
+/>
+              )
+            )}
+          </div>
         </div>
       </section>
+
+      {/* CTA Section */}
+      <section className="py-20 text-center bg-blue-600">
+        <h2 className="text-4xl font-bold text-white mb-4">
+          La solution complète pour la gestion de votre cabinet médical
+        </h2>
+        <p className="text-blue-100 mb-8">
+          Gérez vos patients, vos rendez-vous et vos dossiers médicaux en un seul endroit, simplement et efficacement.
+        </p>
+        <Button
+          size="lg"
+          className="bg-white text-blue-600 hover:bg-blue-50"
+          onClick={() => window.location.href = "/sign-up"}
+        >
+          Essayer gratuitement <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+        <p className="text-blue-200 text-sm mt-4">Gratuit pour toujours. Aucune carte de crédit requise.</p>
+      </section>
     </main>
-    
   );
 }
