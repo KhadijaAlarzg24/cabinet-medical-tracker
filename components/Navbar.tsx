@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getSession } from "@/lib/auth-server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -40,9 +39,14 @@ export default async function Navbar() {
                 </Button>
               </Link>
               <Link href="/appointments">
-              <Button variant="ghost" className="text-gray-700 hover:text-black">
-              Rendez-vous
-              </Button>
+                <Button variant="ghost" className="text-gray-700 hover:text-black">
+                  Rendez-vous
+                </Button>
+              </Link>
+              <Link href="/report">
+                <Button variant="ghost" className="text-gray-700 hover:text-black">
+                  Rapport
+                </Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
