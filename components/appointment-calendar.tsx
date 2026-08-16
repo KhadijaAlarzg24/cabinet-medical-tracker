@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Plus, X, Clock, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, X, Clock, User, Check, Ban } from "lucide-react";
 
 interface Appointment {
   _id: string;
@@ -24,9 +24,9 @@ const TYPE_COLORS = {
 
 const STATUS_COLORS = {
   planifié: "bg-yellow-100 text-yellow-800",
-  confirmé: "bg-green-100 text-green-800",
+  confirmé: "bg-blue-100 text-blue-800",
   annulé: "bg-red-100 text-red-800",
-  terminé: "bg-gray-100 text-gray-800",
+  terminé: "bg-green-100 text-green-800",
 };
 
 const MONTHS = [
@@ -39,7 +39,7 @@ const DAYS = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 export default function AppointmentCalendar({ userId }: { userId: string }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number | null>(new Date().getDate());
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
@@ -90,6 +90,15 @@ export default function AppointmentCalendar({ userId }: { userId: string }) {
     fetchAppointments();
   }
 
+  async function handleStatusChange(id: string, status: string) {
+    await fetch(`/api/appointments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    fetchAppointments();
+  }
+
   function getAppointmentsForDay(day: number) {
     return appointments.filter((a) => {
       const d = new Date(a.date);
@@ -103,11 +112,8 @@ export default function AppointmentCalendar({ userId }: { userId: string }) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Calendar */}
       <div className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold">
-            {MONTHS[month]} {year}
-          </h2>
+          <h2 className="text-xl font-bold">{MONTHS[month]} {year}</h2>
           <div className="flex gap-2">
             <Button variant="outline" size="icon" onClick={() => setCurrentDate(new Date(year, month - 1))}>
               <ChevronLeft className="h-4 w-4" />
@@ -118,14 +124,12 @@ export default function AppointmentCalendar({ userId }: { userId: string }) {
           </div>
         </div>
 
-        {/* Days header */}
         <div className="grid grid-cols-7 mb-2">
           {DAYS.map((d) => (
             <div key={d} className="text-center text-sm font-medium text-gray-400 py-2">{d}</div>
           ))}
         </div>
 
-        {/* Days grid */}
         <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: firstDay }).map((_, i) => (
             <div key={`empty-${i}`} />
@@ -133,10 +137,7 @@ export default function AppointmentCalendar({ userId }: { userId: string }) {
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
             const dayAppointments = getAppointmentsForDay(day);
-            const isToday =
-              day === new Date().getDate() &&
-              month === new Date().getMonth() &&
-              year === new Date().getFullYear();
+            const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
             const isSelected = selectedDay === day;
 
             return (
@@ -170,12 +171,10 @@ export default function AppointmentCalendar({ userId }: { userId: string }) {
 
       {/* Sidebar */}
       <div className="space-y-4">
-        {/* Add button */}
         <Button className="w-full bg-blue-600" onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-2" /> Nouveau Rendez-vous
         </Button>
 
-        {/* Selected day appointments */}
         {selectedDay && (
           <div className="bg-white rounded-2xl shadow-md p-4">
             <h3 className="font-bold mb-3">{selectedDay} {MONTHS[month]}</h3>
@@ -199,11 +198,41 @@ export default function AppointmentCalendar({ userId }: { userId: string }) {
                         <X className="h-4 w-4" />
                       </button>
                     </div>
-                    <div className="flex gap-2 mt-2">
+
+                    <div className="flex gap-2 mt-2 flex-wrap">
                       <span className={`text-xs px-2 py-0.5 rounded-full ${TYPE_COLORS[a.type]}`}>{a.type}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[a.status]}`}>{a.status}</span>
                     </div>
+
                     {a.notes && <p className="text-xs text-gray-500 mt-2">{a.notes}</p>}
+
+                    {/* أزرار تغيير الحالة */}
+                    {a.status !== "terminé" && (
+                      <div className="flex gap-2 mt-3">
+                        {a.status !== "confirmé" && (
+                          <button
+                            onClick={() => handleStatusChange(a._id, "confirmé")}
+                            className="flex-1 text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-lg py-1 hover:bg-blue-100 transition"
+                          >
+                            ✓ Confirmer
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleStatusChange(a._id, "terminé")}
+                          className="flex-1 text-xs bg-green-50 text-green-700 border border-green-200 rounded-lg py-1 hover:bg-green-100 transition"
+                        >
+                          ✓ Terminé
+                        </button>
+                        {a.status !== "annulé" && (
+                          <button
+                            onClick={() => handleStatusChange(a._id, "annulé")}
+                            className="flex-1 text-xs bg-red-50 text-red-700 border border-red-200 rounded-lg py-1 hover:bg-red-100 transition"
+                          >
+                            ✗ Annuler
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
