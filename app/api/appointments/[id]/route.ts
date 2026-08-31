@@ -3,23 +3,25 @@ import connectDB from "@/lib/db";
 import { Appointment } from "@/lib/models";
 import { getSession } from "@/lib/auth-server";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   await connectDB();
-  await Appointment.findOneAndDelete({ _id: params.id, userId: session.user.id });
+  await Appointment.findOneAndDelete({ _id: id, userId: session.user.id });
   return NextResponse.json({ success: true });
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   await connectDB();
   const body = await req.json();
   const appointment = await Appointment.findOneAndUpdate(
-    { _id: params.id, userId: session.user.id },
+    { _id: id, userId: session.user.id },
     body,
     { new: true }
   );
