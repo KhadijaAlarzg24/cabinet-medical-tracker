@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏥 Cabinet Medical Tracker
 
-## Getting Started
+A modern, responsive web application built with **Next.js** and **TypeScript** designed to streamline medical cabinet workflows, manage patient appointments, and generate insights/reports efficiently.
 
-First, run the development server:
+🔗 **Live Demo:** [cabinet-medical-tracker.vercel.app](https://cabinet-medical-tracker.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 📅 **Appointment Management:** Easily schedule, track, and update patient appointments.
+- 🖐️ **Drag & Drop Interface:** Interactive calendar and status update capabilities.
+- 📊 **Monthly Reports:** Automated generation of patient and appointment analytics.
+- 🔐 **Secure Authentication:** Session token management with secure cookie handling.
+- 📱 **Fully Responsive:** Optimized for desktop, tablet, and mobile devices.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Deployment:** [Vercel](https://vercel.com/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Getting Started
 
-## Deploy on Vercel
+To run this project locally, follow these steps:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
+Make sure you have Node.js (v18 or higher) installed.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/KhadijaAlarzg24/cabinet-medical-tracker.git](https://github.com/KhadijaAlarzg24/cabinet-medical-tracker.git)
+   cd cabinet-medical-tracker
