@@ -1,3 +1,4 @@
+import AiReportButton from "@/components/AiReportButton";
 import { getSession } from "@/lib/auth-server";
 import { redirect } from "next/navigation";
 import connectDB from "@/lib/db";
@@ -74,10 +75,7 @@ export default async function ReportPage() {
             <h1 className="text-3xl font-bold text-black">Rapport Mensuel</h1>
             <p className="text-gray-600">{MONTHS[now.getMonth()]} {now.getFullYear()}</p>
           </div>
-          <div className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            <span className="text-sm font-medium">Rapport automatique</span>
-          </div>
+          <AiReportButton />
         </div>
 
         {/* Stats Cards */}
