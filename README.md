@@ -1,4 +1,5 @@
 🏥 Cabinet Medical Tracker
+ Cabinet Medical Tracker
 
 A modern, responsive web application built with Next.js and TypeScript designed to streamline medical cabinet workflows, manage patient appointments, and generate insights/reports efficiently.
 
