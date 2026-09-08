@@ -9,19 +9,19 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.N
 
 export async function generateDatabaseSmartReport() {
   try {
-    // 1. التحقق من المصادقة
+    // 1. Verify user authentication
     const session = await getSession();
     if (!session?.user) {
       return { success: false, error: "Unauthorized" };
     }
 
-    // 2. الاتصال بقاعدة البيانات
+    // 2. Connect to the database
     await connectDB();
 
-    // 3. جلب جميع المرضى الخاصين بالمستخدم الحالي
+    // 3. Fetch all patients associated with the active user
     const patients = await Patient.find({ userId: session.user.id });
 
-    // 4. استخراج الإحصائيات
+    // 4. Extract patient statistics
     const totalPatients = patients.length;
 
     const bloodTypes = patients.map((p: any) => p.bloodType).filter(Boolean);
@@ -38,14 +38,14 @@ export async function generateDatabaseSmartReport() {
       sampleAllergies: Array.from(new Set(allergiesList)).slice(0, 5),
     };
 
-    // جلب التاريخ الحالي بتنسيق واضح للنموذج (مثال: October 24, 2026)
+    // Format current date explicitly for the AI (e.g., September 8, 2026)
     const currentDate = new Date().toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
     });
 
-    // 5. إرسال البيانات للـ AI Agent مع تحديد التاريخ الحالي
+    // 5. Generate medical report using AI with specified date mandate
     const prompt = `
       You are an AI medical practice assistant and data analyst. Based on these REAL patient statistics retrieved directly from our clinic database for the active doctor, generate a professional, structured, and concise executive summary report. 
 
