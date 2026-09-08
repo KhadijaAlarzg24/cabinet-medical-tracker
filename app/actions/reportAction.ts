@@ -9,7 +9,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.N
 
 export async function generateDatabaseSmartReport() {
   try {
-    // 1. التحقق من المصادقة تماماً كما في الـ API Routes لديك
+    // 1. التحقق من المصادقة
     const session = await getSession();
     if (!session?.user) {
       return { success: false, error: "Unauthorized" };
@@ -18,31 +18,41 @@ export async function generateDatabaseSmartReport() {
     // 2. الاتصال بقاعدة البيانات
     await connectDB();
 
-    // 3. جلب جميع المرضى الخاصين بالمستخدم الحالي من MongoDB
+    // 3. جلب جميع المرضى الخاصين بالمستخدم الحالي
     const patients = await Patient.find({ userId: session.user.id });
 
-    // 4. استخراج إحصائيات حقيقية من بيانات المرضى
+    // 4. استخراج الإحصائيات
     const totalPatients = patients.length;
 
-    // استخراج فصائل الدم والأمراض السابقة أو التاريخ الطبي لتحليلها
     const bloodTypes = patients.map((p: any) => p.bloodType).filter(Boolean);
     const medicalHistories = patients.map((p: any) => p.medicalHistory).filter(Boolean);
     const allergiesList = patients.map((p: any) => p.allergies).filter(Boolean);
 
-    // تجميع الإحصائيات في كائن واحد لإرساله للـ AI Agent
     const clinicStats = {
       totalPatients,
       bloodTypesCount: bloodTypes.reduce((acc: any, bt: string) => {
         acc[bt] = (acc[bt] || 0) + 1;
         return acc;
       }, {}),
-      sampleMedicalHistories: medicalHistories.slice(0, 10), // عينة من التاريخ الطبي لتحليل الحالات
+      sampleMedicalHistories: medicalHistories.slice(0, 10),
       sampleAllergies: Array.from(new Set(allergiesList)).slice(0, 5),
     };
 
-    // 5. إرسال البيانات الحقيقية للـ AI Agent ليصنع تقريراً طبياً احترافياً
+    // جلب التاريخ الحالي بتنسيق واضح للنموذج (مثال: October 24, 2026)
+    const currentDate = new Date().toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    // 5. إرسال البيانات للـ AI Agent مع تحديد التاريخ الحالي
     const prompt = `
       You are an AI medical practice assistant and data analyst. Based on these REAL patient statistics retrieved directly from our clinic database for the active doctor, generate a professional, structured, and concise executive summary report. 
+
+      CRITICAL MANDATE:
+      - Set the report date explicitly to: ${currentDate}
+      - Format the header as: **Date:** ${currentDate}
+
       The report should include:
       1. Executive Overview of the Clinic's Patient Base
       2. Health Demographics & Insights (Blood types distribution, common medical conditions based on medical histories)
@@ -58,7 +68,7 @@ export async function generateDatabaseSmartReport() {
     `;
 
     const response = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
     });
 
@@ -67,7 +77,7 @@ export async function generateDatabaseSmartReport() {
       report: response.text,
     };
 
- } catch (error: any) {
+  } catch (error: any) {
     console.error("Error generating database smart report:", error);
     return {
       success: false,
