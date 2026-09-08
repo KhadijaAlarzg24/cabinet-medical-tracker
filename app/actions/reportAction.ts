@@ -45,18 +45,24 @@ export async function generateDatabaseSmartReport() {
       year: 'numeric'
     });
 
-    // 5. Generate medical report using AI with specified date mandate
+    // 5. Generate medical report using AI with strict header structure
     const prompt = `
-      You are an AI medical practice assistant and data analyst. Based on these REAL patient statistics retrieved directly from our clinic database for the active doctor, generate a professional, structured, and concise executive summary report. 
+      You are an AI medical practice assistant and data analyst. Based on these REAL patient statistics retrieved directly from our clinic database for the active doctor, generate a professional, structured, and concise executive summary report.
 
-      CRITICAL MANDATE:
-      - Set the report date explicitly to: ${currentDate}
-      - Format the header as: **Date:** ${currentDate}
+      STRICT HEADER TEMPLATE (You MUST start your response exactly with this header structure):
+      # Executive Medical Practice Summary & Data Analysis Report
 
-      The report should include:
-      1. Executive Overview of the Clinic's Patient Base
-      2. Health Demographics & Insights (Blood types distribution, common medical conditions based on medical histories)
-      3. Key Recommendations for patient care and clinic management efficiency.
+      **Prepared for:** Attending Physician
+      **Role:** AI Medical Practice Assistant & Data Analyst
+      **Date:** ${currentDate}
+      **Data Status:** Active Database Extract
+
+      ---
+
+      The report must include:
+      ### 1. Executive Overview of the Clinic's Patient Base
+      ### 2. Health Demographics & Insights (Blood types distribution, common medical conditions based on medical histories)
+      ### 3. Key Recommendations for patient care and clinic management efficiency.
 
       Real Database Statistics:
       - Total Registered Patients: ${clinicStats.totalPatients}
