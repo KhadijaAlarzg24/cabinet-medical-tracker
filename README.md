@@ -16,16 +16,16 @@ A modern, responsive web application built with Next.js and TypeScript designed 
 * 🔐 **Secure Authentication:** Session token management with secure cookie handling.
 * 📱 **Fully Responsive:** Optimized for desktop, tablet, and mobile devices.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/2c1b0107-a169-4deb-88c8-424b32936802" width="700" alt="Cabinet Medical Tracker - Vue 1" />
-</p>
-<br>
+
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/d57f6a10-5373-4f2c-b88c-fa187a6f3449" width="700" alt="Cabinet Medical Tracker - Vue 2" />
 </p>
 <br>
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2c1b0107-a169-4deb-88c8-424b32936802" width="700" alt="Cabinet Medical Tracker - Vue 1" />
+</p>
+<br>
 <p align="center">
   <img src="https://github.com/user-attachments/assets/b003fca6-a0ed-4300-a514-b59237c8c9f1" width="700" alt="Cabinet Medical Tracker - Vue 3" />
 </p>
